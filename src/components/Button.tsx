@@ -10,7 +10,7 @@ const Button: React.FC = () => {
   return (
     <form onSubmit={handleSubmit}>
       <input type="text" />
-      <button type="submit">Submit</button>
+      <button type="submit">Sut</button>
     </form>
   );
 };

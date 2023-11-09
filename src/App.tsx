@@ -26,11 +26,12 @@ interface Movies {
 function App()  {
 	const MOVIE_API = "https://api.themoviedb.org/3/";
   
-  const api_key= 'ee54a6521282dcae48b2a1ecf714fcbd'
-  
+  const API_KEY= 'ee54a6521282dcae48b2a1ecf714fcbd'
+  const DISCOVER_API = MOVIE_API + "discover/movie"
+  const SEARCH_API = MOVIE_API + "search/movie"
   const [movies, setMovies] = useState<Movies[]>([]);
-  //const [searchText, setSearchValue] = useState<string>('');
-  
+  const [searchText, setSearchText] = useState<string>('');
+  const [movie, setMovie] = useState({title: "Loading Movies"})
 
   const popular = "https://api.themoviedb.org/3/movie/popular";
 
@@ -38,18 +39,37 @@ function App()  {
     fetchMovies();
   },[]);
 
-  const fetchMovies = () => {
+  const fetchMovies = async () => {
    
-    axios.get(`${popular}?api_key=${api_key}`).then((response) => {
-      const result = response.data.results;
-      console.log(result)
-      setMovies(result)
-    })
-  }
+   
+
+  const {data} = await axios.get(`${searchText ? SEARCH_API : DISCOVER_API}`, {
+      params: {
+          api_key: API_KEY,
+          query: searchText
+      }
+  })
+
+  console.log(data.results[0])
+  setMovies(data.results)
+  setMovie(data.results[0])
+
+  
+}
+
+
+const handleSearch = (searchText: string) => {
+  setSearchText(searchText);
+  fetchMovies(); // Call fetchMovies within handleSearch to access searchText
+};
+    
+  
+
+  
 
 	return (
     <><div className='App'>
-      <SearchHeader onSearch={fetchMovies}/>
+      <SearchHeader onSearch={handleSearch}/>
     </div><div className='container fluid App'>
 
         {movies.map((items) => (

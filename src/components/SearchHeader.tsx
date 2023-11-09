@@ -19,7 +19,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ onSearch }) => {
   return (
     <header className='col'>
       <h1>Movie App</h1>
-      <form onSubmit={handleSubmit}>
+      <form className='searchbox' onSubmit={handleSubmit}>
         <input
           type="text"
           value={searchText}
@@ -27,6 +27,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ onSearch }) => {
         />
         <button type="submit">Search</button>
       </form>
+      
     </header>
   );
 };
