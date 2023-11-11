@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import axios from 'axios';
 import SearchHeader from './components/SearchHeader';
+import MovieList from './components/MovieList';
+import AddFavorite from './components/AddFavorite';
+import FavoritesPage from './components/FavoritesPage';
+
 
 interface Movies {
   title: string;
@@ -12,6 +16,9 @@ interface Movies {
   // Add other properties of your movie object here
 }
 
+
+
+
 function App() {
   const MOVIE_API = "https://api.themoviedb.org/3/";
   const API_KEY = 'ee54a6521282dcae48b2a1ecf714fcbd';
@@ -19,31 +26,34 @@ function App() {
   const SEARCH_API = MOVIE_API + "search/movie";
   const [movies, setMovies] = useState<Movies[]>([]);
   const [searchText, setSearchText] = useState<string>('');
+  const [favorites, setFavorites] = useState<Movies[]>([]);
 
+  // Memoize the fetchMovies function using useCallback
+  const fetchMovies = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${SEARCH_API}`, {
+        params: {
+          api_key: API_KEY,
+          query: searchText
+        }
+      });
+
+      setMovies(data.results);
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    }
+  }, [searchText]);
+
+  // Trigger the fetchMovies function whenever searchText changes
   useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const { data } = await axios.get(`${SEARCH_API}`, {
-          params: {
-            api_key: API_KEY,
-            query: searchText
-          }
-        });
-
-        setMovies(data.results);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-      }
-    };
-
-    // Trigger the API call whenever searchText changes
+    // Avoid making the API call if searchText is empty
     if (searchText.trim() !== '') {
       fetchMovies();
     } else {
       // If searchText is empty, fetch popular movies
       fetchPopularMovies();
     }
-  }, [searchText]);
+  }, [searchText, fetchMovies]);
 
   const fetchPopularMovies = async () => {
     try {
@@ -63,20 +73,30 @@ function App() {
     setSearchText(searchText);
   };
 
+  const addToFavorites = (movie: Movies) => {
+    // Create a new favorites list
+    const newFavouriteList = [...favorites, movie];
+    
+    // Update state
+    setFavorites(newFavouriteList);
+  
+    // Save to local storage
+    localStorage.setItem('favorites', JSON.stringify(newFavouriteList));
+  };
+  
+
   return (
     <>
-      <div className='App'>
-        <SearchHeader onSearch={handleSearch} />
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <SearchHeader 
+        onSearch={handleSearch} />
       </div>
-      <div className='container fluid App'>
-        {movies.map((items) => (
-          <div className='movieContainer' key={items.id}>
-            {items.poster_path && (
-              <img src={`https://image.tmdb.org/t/p/w300${items.poster_path}`} alt={`${items.title} Poster`} />
-            )}
-            <p>{items.title}</p>
-          </div>
-        ))}
+      <div className='row'>
+        <MovieList movies={movies} handleFavoritesClick = {addToFavorites} favoriteComponent={AddFavorite} />
+
+      </div>
+      <div className='row'>
+        <FavoritesPage favorites={favorites} />
       </div>
     </>
   );
