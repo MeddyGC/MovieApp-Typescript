@@ -8,4 +8,6 @@ Date: 2023-11-08
 Hours: 8
 Description: Worked on fetching data from API Model, and started CSS extensions best suited.
 
-
+Date: 2023-11-09
+Hours: 8
+Description: Add favorite implemented; Favorites implemented

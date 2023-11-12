@@ -74,15 +74,24 @@ function App() {
   };
 
   const addToFavorites = (movie: Movies) => {
-    // Create a new favorites list
-    const newFavouriteList = [...favorites, movie];
-    
-    // Update state
-    setFavorites(newFavouriteList);
+    // Check if the movie is already in favorites
+    const isDuplicate = favorites.some((fav) => fav.id === movie.id);
   
-    // Save to local storage
-    localStorage.setItem('favorites', JSON.stringify(newFavouriteList));
+    if (!isDuplicate) {
+      // Create a new favorites list
+      const newFavouriteList = [...favorites, movie];
+  
+      // Update state
+      setFavorites(newFavouriteList);
+  
+      // Save to local storage
+      localStorage.setItem('favorites', JSON.stringify(newFavouriteList));
+    } else {
+      // Handle duplicate (optional)
+      console.log('Movie is already in favorites.');
+    }
   };
+  
   
 
   return (
