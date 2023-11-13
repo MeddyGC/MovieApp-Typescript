@@ -6,7 +6,7 @@ import SearchHeader from './components/SearchHeader';
 import MovieList from './components/MovieList';
 import AddFavorite from './components/AddFavorite';
 import FavoritesPage from './components/FavoritesPage';
-
+import { BrowserRouter } from 'react-router-dom';
 
 interface Movies {
   title: string;
@@ -15,9 +15,6 @@ interface Movies {
   release_date: string;
   // Add other properties of your movie object here
 }
-
-
-
 
 function App() {
   const MOVIE_API = "https://api.themoviedb.org/3/";
@@ -73,42 +70,46 @@ function App() {
     setSearchText(searchText);
   };
 
-  const addToFavorites = (movie: Movies) => {
-    // Check if the movie is already in favorites
-    const isDuplicate = favorites.some((fav) => fav.id === movie.id);
+  const addToFavorites = (movie: Movies) =>  {
+    const isFavorite = favorites.some((fav) => fav.id === movie.id);
   
-    if (!isDuplicate) {
-      // Create a new favorites list
-      const newFavouriteList = [...favorites, movie];
+    console.log('Is favorite before:', isFavorite);
   
-      // Update state
-      setFavorites(newFavouriteList);
-  
-      // Save to local storage
-      localStorage.setItem('favorites', JSON.stringify(newFavouriteList));
+    if (!isFavorite) {
+      const newFavoriteList = [...favorites, movie];
+      setFavorites(newFavoriteList);
+      localStorage.setItem('favorites', JSON.stringify(newFavoriteList));
     } else {
-      // Handle duplicate (optional)
-      console.log('Movie is already in favorites.');
+      const updatedFavorites = favorites.filter((fav) => fav.id !== movie.id);
+      setFavorites(updatedFavorites);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
     }
+  
+    console.log('Favorites after:', favorites);
   };
   
-  
-
-  return (
+return (
     <>
       <div className='row d-flex align-items-center mt-4 mb-4'>
-        <SearchHeader 
-        onSearch={handleSearch} />
+        <SearchHeader onSearch={handleSearch} />
       </div>
       <div className='row'>
-        <MovieList movies={movies} handleFavoritesClick = {addToFavorites} favoriteComponent={AddFavorite} />
-
+        <MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />
       </div>
       <div className='row'>
-        <FavoritesPage favorites={favorites} />
+      <header/>
+      <FavoritesPage
+          favorites={favorites}
+          handleFavoritesClick={addToFavorites}
+          favoriteComponent={AddFavorite}
+        />
       </div>
     </>
   );
+ 
+  
+
+  
 }
 
 export default App;

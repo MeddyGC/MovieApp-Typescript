@@ -23,7 +23,7 @@ body {
   overflow: auto;
   flex-wrap: nowrap;
 }
-  
+
 .movieContainer:hover{
   cursor: pointer;
   transform: scale(1.1);
