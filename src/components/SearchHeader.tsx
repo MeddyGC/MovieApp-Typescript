@@ -1,4 +1,6 @@
+// SearchHeader.tsx
 import React, { useState } from 'react';
+import { StyledLinkButton, StyledPrimaryButton } from './styles';
 
 interface SearchHeaderProps {
   onSearch: (searchText: string) => void;
@@ -13,7 +15,8 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ onSearch }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onSearch(searchText); // Call the onSearch prop with searchText as an argument
+    onSearch(searchText);
+    setSearchText('');
   };
 
   return (
@@ -25,9 +28,10 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ onSearch }) => {
           value={searchText}
           onChange={handleInputChange}
         />
-        <button type="submit">Search</button>
+        <StyledPrimaryButton type="submit">Search</StyledPrimaryButton>
+        <StyledLinkButton to="/" className='btn btn-primary linkButton' style={{ marginLeft: '70px' }}>Home</StyledLinkButton>
+        <StyledLinkButton to="/login" className='btn btn-primary linkButton' style={{ marginLeft: '10px' }}>View Favorites</StyledLinkButton>
       </form>
-      
     </header>
   );
 };

@@ -7,6 +7,7 @@ import MovieList from './components/MovieList';
 import AddFavorite from './components/AddFavorite';
 import FavoritesPage from './pages/FavoritesPage';
 import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
 
 interface Movies {
   title: string;
@@ -53,6 +54,15 @@ function App() {
     }
   }, [searchText, fetchMovies]);
 
+
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem('favorites');
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+  }, []); 
+
+
   const fetchPopularMovies = async () => {
     try {
       const { data } = await axios.get(`${DISCOVER_API}`, {
@@ -95,36 +105,38 @@ function App() {
         <div className='row d-flex align-items-center mt-4 mb-4'>
           <SearchHeader onSearch={handleSearch} />
         </div>
-        <div className='row'> {<MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />}</div>
+
         <div className='row'>
           <Routes>
             <Route
               path='/'
-              element={<MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />}
+              element={
+                <MovieList
+                  movies={movies}
+                  handleFavoritesClick={addToFavorites}
+                  favoriteComponent={AddFavorite}
+                />
+              }
             />
+            
+            
+            <Route path='/login' element={<LoginPage />} />
+         
+
+
             <Route
               path='/favorites'
               element={
-                showFavorites ? (
-                  <FavoritesPage
-                    favorites={favorites}
-                    handleFavoritesClick={addToFavorites}
-                    favoriteComponent={AddFavorite}
-                  />
-                ) : null
+                <FavoritesPage
+                  favorites={favorites}
+                  handleFavoritesClick={addToFavorites}
+                  favoriteComponent={AddFavorite}
+                />
               }
             />
           </Routes>
         </div>
-        <div className='row'>
-          {/* Button to toggle displaying the "FavoritesPage" */}
-          <button
-            className='btn btn-primary'
-            onClick={() => setShowFavorites((prevShowFavorites) => !prevShowFavorites)}
-          >
-            View Favorites
-          </button>
-        </div>
+        
       </>
     </Router>
   );
