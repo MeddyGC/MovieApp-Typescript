@@ -5,4 +5,4 @@ interface Movies {
     release_date: string;
   }
 
-  export {};
+  export {}

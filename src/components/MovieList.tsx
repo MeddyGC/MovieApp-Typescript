@@ -6,7 +6,12 @@ interface MovieListProps {
   favoriteComponent: React.FC<AddFavoriteProps>; // Correct the type here
 }
 
-
+interface Movies {
+  title: string;
+  poster_path: string;
+  id: number;
+  release_date: string;
+}
 
 interface AddFavoriteProps {
   onClick: () => void;

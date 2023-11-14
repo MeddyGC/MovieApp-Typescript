@@ -5,8 +5,8 @@ import axios from 'axios';
 import SearchHeader from './components/SearchHeader';
 import MovieList from './components/MovieList';
 import AddFavorite from './components/AddFavorite';
-import FavoritesPage from './components/FavoritesPage';
-import { BrowserRouter } from 'react-router-dom';
+import FavoritesPage from './pages/FavoritesPage';
+import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
 
 interface Movies {
   title: string;
@@ -24,6 +24,7 @@ function App() {
   const [movies, setMovies] = useState<Movies[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [favorites, setFavorites] = useState<Movies[]>([]);
+  const [showFavorites, setShowFavorites] = useState(false);
 
   // Memoize the fetchMovies function using useCallback
   const fetchMovies = useCallback(async () => {
@@ -88,28 +89,45 @@ function App() {
     console.log('Favorites after:', favorites);
   };
   
-return (
-    <>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
-        <SearchHeader onSearch={handleSearch} />
-      </div>
-      <div className='row'>
-        <MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />
-      </div>
-      <div className='row'>
-      <header/>
-      <FavoritesPage
-          favorites={favorites}
-          handleFavoritesClick={addToFavorites}
-          favoriteComponent={AddFavorite}
-        />
-      </div>
-    </>
+  return (
+    <Router>
+      <>
+        <div className='row d-flex align-items-center mt-4 mb-4'>
+          <SearchHeader onSearch={handleSearch} />
+        </div>
+        <div className='row'> {<MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />}</div>
+        <div className='row'>
+          <Routes>
+            <Route
+              path='/'
+              element={<MovieList movies={movies} handleFavoritesClick={addToFavorites} favoriteComponent={AddFavorite} />}
+            />
+            <Route
+              path='/favorites'
+              element={
+                showFavorites ? (
+                  <FavoritesPage
+                    favorites={favorites}
+                    handleFavoritesClick={addToFavorites}
+                    favoriteComponent={AddFavorite}
+                  />
+                ) : null
+              }
+            />
+          </Routes>
+        </div>
+        <div className='row'>
+          {/* Button to toggle displaying the "FavoritesPage" */}
+          <button
+            className='btn btn-primary'
+            onClick={() => setShowFavorites((prevShowFavorites) => !prevShowFavorites)}
+          >
+            View Favorites
+          </button>
+        </div>
+      </>
+    </Router>
   );
- 
-  
-
-  
 }
 
 export default App;
